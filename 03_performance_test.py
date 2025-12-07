@@ -2,12 +2,11 @@ import timeit
 from searching_algorithms import boyer_moore_search, kmp_search, rabin_karp_search, regex_search
 
 
-def measure_time(algorithm, text, pattern, number=10):
+def measure_time(algorithm, text, pattern, number=10) -> [float]:
     """
     Вимірює час виконання алгоритму
     """
-    result = timeit.timeit(lambda: algorithm(text, pattern), number=number)
-    return result / number
+    return timeit.timeit(lambda: algorithm(text, pattern), number=number)
 
 
 def run_performance_tests():
@@ -29,8 +28,8 @@ def run_performance_tests():
                 "small": "алгоритми",
                 "big": "Висновки. Кожна система містить набір обмежень і вимог.",
                 "non_existent_small": "космос",
-                "non_existent_big": "Це дуже довгий рядок якого точно \
-                    немає в цьому тексті про алгоритми."
+                "non_existent_big": "Це дуже довгий рядок якого точно "
+                                    "немає в цьому тексті про алгоритми."
             }
         },
         "стаття_2.txt": {
@@ -38,8 +37,8 @@ def run_performance_tests():
                 "small": "рекомендацій",
                 "big": "відповідно до результатів проведених експериментів",
                 "non_existent_small": "синхрофазотрон",
-                "non_existent_big": "Це ще один дуже довгий рядок якого \
-                    точно немає в цій статті про бази даних."
+                "non_existent_big": "Це ще один дуже довгий рядок якого "
+                                    "точно немає в цій статті про бази даних."
             }
         }
     }
@@ -52,32 +51,43 @@ def run_performance_tests():
             print(f"Помилка: Файл '{filename}' не знайдено.")
             conf['text'] = ""
 
+
+    number = 100
     print("")
-    print("=" * 100)
+    print("=" * 81)
     print("ПОРІВНЯЛЬНИЙ АНАЛІЗ АЛГОРИТМІВ ПОШУКУ ПІДРЯДКІВ")
-    print("=" * 100)
+    print(f"Загальний час (ms) на {number} повторів")
+    print("=" * 81)
     print()
 
     for filename, conf in settings.items():
+        tests = []
         if not conf['text']:
             continue
-        number = 100
-        print("\n" + "=" * 100)
-        print(f"НАЗВА ФАЙЛУ: {filename}")
-        print("=" * 100 + "\n")
-        print(
-            f"{'Тип підрядка':<20} {'Алгоритм':<20} {f'Середній час (ms)':<20}"
-            + f"{f'Час для {number} спроб (ms)':<20}"
-        )
         for pattern_name, pattern in conf['patterns'].items():
-            print("-" * 100)
-            times = {}
+            result = {}
             for alg_name, alg_func in algorithms.items():
-                times[alg_name] = measure_time(
-                    alg_func, conf['text'], pattern, number=number
-                )
-                print(f"{pattern_name:<20} {alg_name:<20} {times[alg_name] * 1000:<20.5f}"
-                + f" {times[alg_name] * number * 1000:<20.5f}")
+                if pattern_name not in result:
+                    result[pattern_name] = {}
+                result[pattern_name][alg_name] = measure_time(
+                            alg_func, conf['text'], pattern, number=number
+                        )
+            tests.append(result)
+
+        print("\n" + "=" * 81)
+        print(f"НАЗВА ФАЙЛУ: {filename}")
+        print("=" * 81 + "\n")
+        column_names = ""
+        for alg_name in algorithms:
+            column_names += f"{alg_name: >15}"
+        print( f"{'Тип підрядка':<20} {column_names}")
+        for test in tests:
+            row = ""
+            for pattern_name in test:
+                for alg_name in algorithms:
+                    row += f"{test[pattern_name][alg_name] * 1000: >15.3f}"
+            print(f"{pattern_name:<20} {row}")
+
         print()
 
 if __name__ == "__main__":
