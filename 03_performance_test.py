@@ -63,6 +63,7 @@ def run_performance_tests():
 
     for filename, conf in settings.items():
         tests = []
+        chart_data = {}
         if not conf['text']:
             continue
         for pattern_name, pattern in conf['patterns'].items():
@@ -73,6 +74,9 @@ def run_performance_tests():
                 result[pattern_name][alg_name] = measure_time(
                             alg_func, conf['text'], pattern, number=number
                         )
+                if pattern_name not in chart_data:
+                    chart_data[pattern_name] = []
+                chart_data[pattern_name].append(result[pattern_name][alg_name] * 1000)
             tests.append(result)
 
         print("\n" + "=" * 81)
@@ -89,13 +93,6 @@ def run_performance_tests():
                     row += f"{test[pattern_name][alg_name] * 1000: >15.3f}"
             print(f"{pattern_name:<20} {row}")
 
-        chart_data = {}
-        for test in tests:
-            for pattern_name in test:
-                for alg_name in algorithms:
-                    if pattern_name not in chart_data:
-                        chart_data[pattern_name] = []
-                    chart_data[pattern_name].append(test[pattern_name][alg_name] * 1000)
         create_chart(
             "Загальний час виконання алгоритмів пошуку підрядків",
             chart_data,
