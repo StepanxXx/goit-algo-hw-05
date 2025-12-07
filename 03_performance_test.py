@@ -62,22 +62,16 @@ def run_performance_tests():
     print()
 
     for filename, conf in settings.items():
-        tests = []
-        chart_data = {}
+        tests = {}
         if not conf['text']:
             continue
         for pattern_name, pattern in conf['patterns'].items():
-            result = {}
             for alg_name, alg_func in algorithms.items():
-                if pattern_name not in result:
-                    result[pattern_name] = {}
-                result[pattern_name][alg_name] = measure_time(
+                if pattern_name not in tests:
+                    tests[pattern_name] = {}
+                tests[pattern_name][alg_name] = measure_time(
                             alg_func, conf['text'], pattern, number=number
-                        )
-                if pattern_name not in chart_data:
-                    chart_data[pattern_name] = []
-                chart_data[pattern_name].append(result[pattern_name][alg_name] * 1000)
-            tests.append(result)
+                        ) * 1000
 
         print("\n" + "=" * 81)
         print(f"НАЗВА ФАЙЛУ: {filename}")
@@ -86,16 +80,15 @@ def run_performance_tests():
         for alg_name in algorithms:
             column_names += f"{alg_name: >15}"
         print( f"{'Тип підрядка':<20} {column_names}")
-        for test in tests:
+        for pattern_name, record in tests.items():
             row = ""
-            for pattern_name in test:
-                for alg_name in algorithms:
-                    row += f"{test[pattern_name][alg_name] * 1000: >15.3f}"
+            for alg_name in algorithms:
+                row += f"{record[alg_name]: >15.3f}"
             print(f"{pattern_name:<20} {row}")
 
         create_chart(
             "Загальний час виконання алгоритмів пошуку підрядків",
-            chart_data,
+            tests,
             filename.split(".", maxsplit=1)[0]+"_chart.png"
         )
 
