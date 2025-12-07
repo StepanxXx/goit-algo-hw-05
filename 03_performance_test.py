@@ -1,4 +1,5 @@
 import timeit
+from visualize_results import create_chart
 from searching_algorithms import boyer_moore_search, kmp_search, rabin_karp_search, regex_search
 
 
@@ -87,6 +88,19 @@ def run_performance_tests():
                 for alg_name in algorithms:
                     row += f"{test[pattern_name][alg_name] * 1000: >15.3f}"
             print(f"{pattern_name:<20} {row}")
+
+        chart_data = {}
+        for test in tests:
+            for pattern_name in test:
+                for alg_name in algorithms:
+                    if pattern_name not in chart_data:
+                        chart_data[pattern_name] = []
+                    chart_data[pattern_name].append(test[pattern_name][alg_name] * 1000)
+        create_chart(
+            "Загальний час виконання алгоритмів пошуку підрядків",
+            chart_data,
+            filename.split(".", maxsplit=1)[0]+"_chart.png"
+        )
 
         print()
 

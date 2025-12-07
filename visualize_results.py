@@ -4,18 +4,18 @@ import numpy as np
 def create_chart(title, data, filename):
     labels = list(data.keys())
     # data structure: {'sub_type': [BM, KMP, RK, Regex]}
-    
+
     # Transpose data for plotting
     # We want groups by Substring Type
-    
+
     substring_types = list(data.keys()) # ['small', 'big', ...]
     algorithms = ['Boyer-Moore', 'KMP', 'Rabin-Karp', 'Regex']
-    
+
     x = np.arange(len(substring_types))  # the label locations
     width = 0.2  # the width of the bars
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    
+
     # Extract values for each algorithm
     bm_vals = [data[t][0] for t in substring_types]
     kmp_vals = [data[t][1] for t in substring_types]
@@ -38,7 +38,7 @@ def create_chart(title, data, filename):
     # Let's stick to linear but mentioned it could be log. 
     # Actually, Regex is so small it might be invisible. 
     # Let's try to make it clear.
-    
+
     fig.tight_layout()
 
     plt.savefig(filename)
@@ -53,7 +53,7 @@ if __name__ == "__main__":
         'non_existent_small': [27.517, 52.086, 115.522, 0.443],
         'non_existent_big': [4.524, 51.015, 117.862, 0.369]
     }
-    
+
     data_2 = {
         'small': [0.223, 0.364, 0.754, 0.041],
         'big': [11.557, 73.802, 165.409, 0.670],
